@@ -12,14 +12,18 @@ the implementation will search the grid for that number
 main = do
   contents <- readFile "Problem11.txt"
   let grid = loadGrid $ lines contents
-  print "Number at (0,0): "
-  print $ numberAt (0,0) grid
-  print "Vertical product of (0,0): "
-  print $ verticalProduct (0,0) grid
-  print "Horizontal product of (0,0): "
-  print $ horizontalProduct (0,0) grid
-  print "Diagonal product of (0,0): "
-  print $ diagonalProduct (0,0) grid
+  print $ problem11 grid
+
+problem11 grid = maximum $ verticalProducts grid ++ (horizontalProducts grid) ++ (diagonalProducts grid) ++ (diagonalProducts' grid)
+
+verticalProducts grid = map (`verticalProduct` grid) [(x,y) | x<-[0..19], y<-[0..16]]
+
+horizontalProducts grid = map (`horizontalProduct` grid) [(x,y) | x<-[0..16], y<-[0..19]]
+
+diagonalProducts grid = map (`diagonalProduct` grid) [(x,y) | x<-[0..16], y<-[0..16]]
+
+diagonalProducts' grid = map (`diagonalProduct'` grid) [(x,y) | x<-[3..19], y<-[0..16]]
+
 readString :: String -> [Int]
 readString string =  map read $ words string
 
@@ -52,4 +56,12 @@ diagonalProduct (x,y) grid =
       b = numberAt (x+1,y+1) grid
       c = numberAt (x+2,y+2) grid
       d = numberAt (x+3,y+3) grid
+  in a*b*c*d
+
+diagonalProduct' :: (Int,Int) -> [[Int]] -> Int
+diagonalProduct' (x,y) grid =
+  let a = numberAt (x,y) grid
+      b = numberAt (x-1,y+1) grid
+      c = numberAt (x-2,y+2) grid
+      d = numberAt (x-3,y+3) grid
   in a*b*c*d
